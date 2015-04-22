@@ -50,7 +50,7 @@ let main argv =
         failwith "El directorio de resultados no existe."
  
 
-    // ==========================
+    // ========Algorithm===========
     let players = FileToList pathFile
     let maxPlayers = List.length players
 
