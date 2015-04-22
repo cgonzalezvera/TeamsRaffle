@@ -1,4 +1,4 @@
-﻿///Claudio E.Gonzalez Vera
+﻿//Author: Claudio E.Gonzalez Vera
 open System
 open System.IO
 
@@ -32,10 +32,14 @@ let FileToList pathFile=
    let players = Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> s.Trim())
    players
 
+
+
+// By that function the program start
 [<EntryPoint>]
 let main argv = 
 
 
+    // ===Initial assertions=====
     if argv.Length < 2 then 
         failwith "Faltan los parametros: archivo_jugadores y archivo_resultado."
     let pathFile = argv.[0]
@@ -45,6 +49,8 @@ let main argv =
     if Directory.Exists(Path.GetDirectoryName(pathResult)) = false then 
         failwith "El directorio de resultados no existe."
  
+
+    // ==========================
     let players = FileToList pathFile
     let maxPlayers = List.length players
 
@@ -59,6 +65,9 @@ let main argv =
 
     let eq1Text = String.Format("Equipo1:[{0}]", (convertList teamFinal1))
     let eq2Text = String.Format("Equipo2:[{0}]", (convertList teamFinal2))
+
+
+    //=================================
 
     let contentFinal = 
         (new System.Text.StringBuilder()).AppendLine(eq1Text).AppendLine(",").AppendLine(eq2Text).ToString()
