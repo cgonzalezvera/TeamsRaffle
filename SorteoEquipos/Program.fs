@@ -16,15 +16,19 @@ let main argv =
     let contentPlayers = File.ReadAllText(pathFile)
     let players = Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> s.Trim())
     let maxPlayers = List.length players
+
     printfn "Numero de players: %A" maxPlayers
+
     let rand = new Random(System.DateTime.Now.Day + System.DateTime.Now.Minute)
     
-    let Transform item = 
-        let value = rand.Next(1, maxPlayers)
-        value, item
+    let AssignWeightToPlayer player = 
+        let weight = rand.Next(1, maxPlayers)
+        weight, player
     
-    let listWithPeso = List.map (Transform) players |> List.sortBy (fun (value, n) -> value)
+    let listWithPeso = List.map (AssignWeightToPlayer) players |> List.sortBy (fun (value, n) -> value)
+
     let pesoTotal, result = listWithPeso |> List.reduce (fun (peso1, name1) (peso2, name2) -> peso1 + peso2, "")
+
     let team1, team2 = List.partition (fun (value, n) -> value >= (pesoTotal / maxPlayers)) listWithPeso
     
     let EqualizeTeams (e1 : List<int * string>) (e2 : List<int * string>) = 
@@ -45,12 +49,14 @@ let main argv =
             r1, r2
         else e1, e2
     
-    // e1, e2
+   
     let teamFinal1, teamFinal2 = EqualizeTeams team1 team2
     let convertList (list : List<int * string>) = 
         List.reduce (fun (peso1, name1) (peso2, name2) -> 0, name1 + ", " + name2) list |> (fun (p, n) -> n)
+
     let eq1Text = String.Format("Equipo1:[{0}]", (convertList teamFinal1))
     let eq2Text = String.Format("Equipo2:[{0}]", (convertList teamFinal2))
+
     let contentFinal = 
         (new System.Text.StringBuilder()).AppendLine(eq1Text).AppendLine(",").AppendLine(eq2Text).ToString()
 
