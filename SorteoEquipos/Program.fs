@@ -59,4 +59,4 @@ let main argv =
     printfn "Numero de players: %A" quantityPlayers
     printfn "%A" contentFinal
     File.WriteAllText(pathResult, contentFinal)
-    0 // return an integer exit code
+    0 
