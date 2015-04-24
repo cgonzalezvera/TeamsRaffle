@@ -25,7 +25,7 @@ let GetVariablesFomConfig()=
     let result=Array.toList (content.Split(','))
     result
 
-let GetValueFromLineText (lineString:string option) =
+let SeparatePartsTextLine (lineString:string option) =
     match lineString with
         |None->{Key="";Value=""}
         |Some(lineString)->
@@ -41,13 +41,13 @@ let findText (textToCompare:string) (text:string) =
 
 let GetPlayersPathFromConfig()=
     let players=GetVariablesFomConfig() |> List.tryFind (findText "players") 
-    GetValueFromLineText players
+    SeparatePartsTextLine players
  
 
         
 let GetResultPathFromConfig()=
     let players=GetVariablesFomConfig() |> List.tryFind (findText "results") 
-    GetValueFromLineText players
+    SeparatePartsTextLine players
  
         
     

@@ -41,20 +41,28 @@ let EqualizeTeams (team1 : List<Player>) (team2 : List<Player>) =
 let FileToList pathFile = 
     let contentPlayers = File.ReadAllText(pathFile)
     //--Get skill value from name
-    let parseSkillName (playerName:string)=
-        let result=ConfigurationMisc.GetValueFromLineText (Some(playerName))
+    let getSkillValue (playerName:string)=
+        let result=ConfigurationMisc.SeparatePartsTextLine (Some(playerName))
         match result.IsValue with
             |true-> Int32.Parse(result.Value)
             |false ->1
-    let parseOnlyName (playerName:string)=
-        let result=ConfigurationMisc.GetValueFromLineText (Some(playerName))
+    let getOnlyName (playerName:string)=
+        let result=ConfigurationMisc.SeparatePartsTextLine (Some(playerName))
         result.Key
+    (*
+        The separator between lines in player's file is with "," 
+        Example player's file:
+         pedro[=19],
+         marcos[=10]
 
+         In general, each line: identifier_player  [= fixed weight] ,
+
+    *)
     let players = 
         Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> 
-                                                        { Name = parseOnlyName(s.Trim())
+                                                        { Name = getOnlyName(s.Trim())
                                                           Weight = 0
-                                                          SkillValue=Some(parseSkillName(s.Trim()))
+                                                          SkillValue=Some(getSkillValue(s.Trim()))
                                                           })
     players
 
