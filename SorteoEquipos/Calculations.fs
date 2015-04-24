@@ -4,13 +4,23 @@ open System
 open System.IO
 
 type Player = 
-    { Name : string
-      Weight : int }
+    { Name : string;
+      Weight : int ;
+      SkillValue: int option ;
+    }
+    member this.GetSkillValue()=
+       let value=this.SkillValue
+       match value with
+        |None-> 1
+        |Some(value) -> value
 
 let rand = new Random(System.DateTime.Now.Day + System.DateTime.Now.Minute)
 
-let ValuingPlayer maxPlayers player = 
-    let weight = rand.Next(1, maxPlayers * System.DateTime.Now.Second)
+//This method valuing a player
+let ValuingPlayer maxPlayers (player:Player) = 
+    
+    let factor = rand.Next(1, maxPlayers * System.DateTime.Now.Second)
+    let weight = player.GetSkillValue() * factor
     { player with Weight = weight } //"with"-> cloning a object with a property's value different
 
 let EqualizeTeams (team1 : List<Player>) (team2 : List<Player>) = 
@@ -30,11 +40,22 @@ let EqualizeTeams (team1 : List<Player>) (team2 : List<Player>) =
 
 let FileToList pathFile = 
     let contentPlayers = File.ReadAllText(pathFile)
-    
+    //--Get skill value from name
+    let parseSkillName (playerName:string)=
+        let result=ConfigurationMisc.GetValueFromLineText (Some(playerName))
+        match result.IsValue with
+            |true-> Int32.Parse(result.Value)
+            |false ->1
+    let parseOnlyName (playerName:string)=
+        let result=ConfigurationMisc.GetValueFromLineText (Some(playerName))
+        result.Key
+
     let players = 
         Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> 
-                                                        { Name = s.Trim()
-                                                          Weight = 0 })
+                                                        { Name = parseOnlyName(s.Trim())
+                                                          Weight = 0
+                                                          SkillValue=Some(parseSkillName(s.Trim()))
+                                                          })
     players
 
 let listToText (players : List<Player>) = 

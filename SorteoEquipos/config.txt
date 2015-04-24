@@ -1,0 +1,2 @@
+players=c:\temp\players.txt,
+results=c:\temp\result.txt,

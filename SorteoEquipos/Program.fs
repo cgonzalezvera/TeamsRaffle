@@ -4,13 +4,24 @@ open System
 open System.IO
 open Calculations
 
+
+
 // By that function the program start
 [<EntryPoint>]
 let main argv = 
+
+    
     // ===Initial assertions=====
-    if argv.Length < 2 then failwith "Faltan los parametros: archivo_jugadores y archivo_resultado."
-    let pathFile = argv.[0]
-    let pathResult = argv.[1]
+    //if argv.Length < 2 then failwith "Faltan los parametros: archivo_jugadores y archivo_resultado."
+    let filePlayers = ConfigurationMisc.GetPlayersPathFromConfig() //argv.[0]
+    let fileResult = ConfigurationMisc.GetResultPathFromConfig()
+
+    if filePlayers.IsValue=false then failwith "No se configuro archivo de players."
+    if fileResult.IsValue=false then failwith "No se configuro archivo de resultados."
+
+    let pathFile=filePlayers.Value
+    let pathResult=fileResult.Value
+
     if File.Exists(pathFile) = false then failwith "El archivo de players no se encuentra en el directorio indicado."
     if Directory.Exists(Path.GetDirectoryName(pathResult)) = false then 
         failwith "El directorio de resultados no existe."
