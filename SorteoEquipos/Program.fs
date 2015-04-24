@@ -18,16 +18,15 @@ let main argv =
     let quantityPlayers = List.length players
     if quantityPlayers % 2 <> 0 then failwith "La cantidad de jugadores debe ser un numero par."
     // ========Algorithm===========
-    let weighedPlayers = 
-        List.map ((AssignWeightToPlayer quantityPlayers)) players |> List.sortBy (fun (value, n) -> value)
-    let totalWeight, result = weighedPlayers |> List.reduce (fun (peso1, name1) (peso2, name2) -> peso1 + peso2, "")
-    let team1, team2 = List.partition (fun (weigh, n) -> weigh >= (totalWeight / quantityPlayers)) weighedPlayers
+    let weighedPlayers = players|>List.map ((ValuingPlayer quantityPlayers))  |> List.sortBy (fun (player) -> player.Weight)
+    let totalWeight = weighedPlayers |> List.fold (fun acc player->acc+player.Weight) 0 
+    let team1, team2 = List.partition (fun (player) -> player.Weight>= (totalWeight / quantityPlayers)) weighedPlayers
     let ultimateTeam1, ultimateTeam2 = EqualizeTeams team1 team2
     //==========Presentation================
-    let eq1Text = String.Format("Equipo1:[{0}]", (convertList ultimateTeam1))
-    let eq2Text = String.Format("Equipo2:[{0}]", (convertList ultimateTeam2))
+    let team1AsText = String.Format("Equipo1:[{0}]", (listToText ultimateTeam1))
+    let team2AsText = String.Format("Equipo2:[{0}]", (listToText ultimateTeam2))
     let contentFinal = 
-        (new System.Text.StringBuilder()).AppendLine(eq1Text).AppendLine(",").AppendLine(eq2Text).ToString()
+        (new System.Text.StringBuilder()).AppendLine(team1AsText).AppendLine(",").AppendLine(team2AsText).ToString()
     printfn "Numero de players: %A" quantityPlayers
     printfn "%A" contentFinal
     File.WriteAllText(pathResult, contentFinal)

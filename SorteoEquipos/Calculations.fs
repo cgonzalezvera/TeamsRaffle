@@ -3,15 +3,19 @@
 open System
 open System.IO
 
+type Player = 
+    { Name : string
+      Weight : int }
+
 let rand = new Random(System.DateTime.Now.Day + System.DateTime.Now.Minute)
 
-let AssignWeightToPlayer maxPlayers player = 
-    let weight = rand.Next(1, maxPlayers)
-    weight, player
+let ValuingPlayer maxPlayers player = 
+    let weight = rand.Next(1, maxPlayers*System.DateTime.Now.Second)
+    { player with Weight = weight } //"with"-> cloning a object with a property's value different
 
-let EqualizeTeams (team1 : List<int * string>) (team2 : List<int * string>) = 
-    let BalanceNow (teamSmall : List<int * string>) (teamLarge : List<int * string>) = 
-        let rec transferPlayers (small : List<int * string>) (large : List<int * string>) = 
+let EqualizeTeams (team1 : List<Player>) (team2 : List<Player>) = 
+    let BalanceNow (teamSmall : List<Player>) (teamLarge : List<Player>) = 
+        let rec transferPlayers (small : List<Player>) (large : List<Player>) = 
             if small.Length < large.Length then 
                 let stillSmall = small @ [ large.Head ]
                 let stillLarge = large.Tail
@@ -29,8 +33,12 @@ let EqualizeTeams (team1 : List<int * string>) (team2 : List<int * string>) =
 
 let FileToList pathFile = 
     let contentPlayers = File.ReadAllText(pathFile)
-    let players = Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> s.Trim())
+    
+    let players = 
+        Array.toList (contentPlayers.Split(',')) |> List.map (fun s -> 
+                                                        { Name = s.Trim()
+                                                          Weight = 0 })
     players
 
-let convertList (list : List<int * string>) = 
-    List.reduce (fun (peso1, name1) (peso2, name2) -> 0, name1 + ", " + name2) list |> (fun (p, n) -> n)
+let listToText (list : List<Player>) = 
+    List.map (fun player -> player.Name) list |> List.reduce (fun n1 n2 -> String.Format("{0}, {1}", n1, n2))
