@@ -2,7 +2,7 @@
 
 open System
 open System.IO
-
+ 
 type Player = 
     { Name : string;
       Weight : int ;
